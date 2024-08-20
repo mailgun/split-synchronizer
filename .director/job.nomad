@@ -43,10 +43,8 @@ job "informant.split-proxy" {
       shutdown_delay = "10s"
 
       config {
-        image = "splitsoftware/split-proxy"
-        command = "split-proxy"
-        args = ["-config=/etc/splitio.config.json",  "-log-level=verbose"]
-        entrypoint = ["/bin/sh"]
+        image = "ghcr.io/mailgun/split-synchronizer:{@tag}"
+        command = "split-proxy -config=/etc/splitio.config.json"
         force_pull = true
 
         ports = ["http", "admin"]

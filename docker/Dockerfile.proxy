@@ -1,5 +1,5 @@
 # Build stage
-FROM ghcr.io/mailgun/gobuild:latest AS deps
+FROM ghcr.io/mailgun/gobuild:latest AS build
 
 ARG EXTRA_BUILD_ARGS
 

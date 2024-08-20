@@ -21,7 +21,7 @@ RUN ls
 
 # Runner stage
 FROM debian:12.6
-COPY --from=build split-proxy split-proxy
+COPY --from=build /code/split-proxy split-proxy
 
 RUN apt update -y
 RUN apt install -y bash ca-certificates

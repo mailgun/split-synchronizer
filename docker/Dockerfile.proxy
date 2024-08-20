@@ -10,8 +10,6 @@ WORKDIR /code
 
 COPY . .
 
-RUN bash -c 'make clean split-proxy entrypoints EXTRA_BUILD_ARGS="${EXTRA_BUILD_ARGS}"'
-
 FROM deps as check
 RUN --mount=type=bind,target=/go/src,rw \
     go fmt ./... && \
@@ -23,10 +21,13 @@ RUN --mount=type=bind,target=/go/src,rw \
     go version && \
     CGO_ENABLED=0 go install -a -v ./...
 
+RUN make split-proxy
+
 # Runner stage
 # Build docker image, leaving behind everything we don’t want in the final image.
 FROM ghcr.io/mailgun/gobase:latest
 COPY --from=build /go/bin/* /go/bin/
+COPY --from=build split-proxy split-proxy
 
 RUN apt update -y
 RUN apt install -y bash ca-certificates
@@ -40,10 +41,6 @@ RUN adduser \
     --uid 1000 \
     'split-proxy'
 
-COPY docker/functions.sh .
-
-COPY --from=build /code/split-proxy /usr/bin/
-COPY --from=build /code/entrypoint.proxy.sh .
 
 EXPOSE 3000 3010
 

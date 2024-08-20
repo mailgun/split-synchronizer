@@ -33,12 +33,7 @@ jobs:
         with:
           path: /tmp/.buildx-cache
           key: ${{ runner.os }}-docker-${{ github.event.number }}
-          restore-keys:
-            ${{ runner.os }}-docker-
-            # Start dependent services in containers, NOTE: Some services might not
-      # have external dependencies so this action might need to be removed.
-      - name: Docker Compose
-        run: docker compose up -d --wait --quiet-pull
+          restore-keys: ${{ runner.os }}-docker-
       # Automagically extract useful information from the current github context and creates
       # a set of labels for use by build-push-action to be attached to the final image.
       - name: Extract Metadata for Docker

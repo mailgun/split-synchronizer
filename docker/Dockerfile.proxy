@@ -1,5 +1,5 @@
 # Build stage
-FROM ghcr.io/mailgun/gobuild:latest AS build
+FROM golang:1.22.5-bookworm AS build
 
 ARG EXTRA_BUILD_ARGS
 
@@ -17,7 +17,7 @@ RUN --mount=type=bind,target=/go/src,rw \
 RUN make split-proxy
 
 # Runner stage
-FROM ghcr.io/mailgun/gobase:latest
+FROM debian:12.6
 COPY --from=build /go/bin/* /go/bin/
 COPY --from=build split-proxy split-proxy
 

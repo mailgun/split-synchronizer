@@ -3,7 +3,7 @@ name: test
 on:
   pull_request:
     branches-ignore:
-      - none
+      - feat/internal-proxy-image
 
 jobs:
   build-and-test:

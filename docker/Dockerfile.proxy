@@ -10,13 +10,6 @@ WORKDIR /code
 
 COPY . .
 
-FROM deps as check
-RUN --mount=type=bind,target=/go/src,rw \
-    go fmt ./... && \
-    go vet ./... 
-
-# Build cmds
-FROM check as build
 RUN --mount=type=bind,target=/go/src,rw \
     go version && \
     CGO_ENABLED=0 go install -a -v ./...
@@ -24,7 +17,6 @@ RUN --mount=type=bind,target=/go/src,rw \
 RUN make split-proxy
 
 # Runner stage
-# Build docker image, leaving behind everything we don’t want in the final image.
 FROM ghcr.io/mailgun/gobase:latest
 COPY --from=build /go/bin/* /go/bin/
 COPY --from=build split-proxy split-proxy

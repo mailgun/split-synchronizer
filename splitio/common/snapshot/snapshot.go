@@ -80,11 +80,12 @@ func (s *Snapshot) Data() ([]byte, error) {
 
 // Encode returns the bytes slice snapshot representation
 // Snapshot Layout:
-//			         |metadata-size|metadata|data|
 //
-//         metadata-size: uint64 (8 bytes) specifies the amount of metadata bytes
-//         metadata: Gob encoded of Metadata struct
-//         data: Proxy data, byte slice. The Metadata have information about it, Storage, Gzipped and version.
+//				         |metadata-size|metadata|data|
+//
+//	        metadata-size: uint64 (8 bytes) specifies the amount of metadata bytes
+//	        metadata: Gob encoded of Metadata struct
+//	        data: Proxy data, byte slice. The Metadata have information about it, Storage, Gzipped and version.
 func (s *Snapshot) Encode() ([]byte, error) {
 
 	metaBytes, err := metaToBytes(s.meta)

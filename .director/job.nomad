@@ -1,4 +1,4 @@
-job "informant.split-proxy" {
+job "split-synchronizer.proxy" {
   type = "service"
 
   vault {
@@ -100,7 +100,7 @@ EOF
         ]
 
         check {
-          name     = "informant split proxy health"
+          name     = "split proxy health"
           type     = "http"
           protocol = "http"
           interval = "10s"

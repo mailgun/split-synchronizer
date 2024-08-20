@@ -16,6 +16,8 @@ RUN --mount=type=bind,target=/go/src,rw \
 
 RUN make split-proxy
 
+RUN pwd && ls
+
 # Runner stage
 FROM debian:12.6
 COPY --from=build /go/bin/* /go/bin/

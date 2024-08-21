@@ -65,7 +65,7 @@ job "split-synchronizer.proxy" {
 {
     "apikey":  "{{with secret "mg-services/informant"}}{{index .Data.data.split_proxy_server_key}}{{end}}",
     "server": {
-        "apikeys":  "{{with secret "mg-services/informant"}}{{index .Data.data.split_proxy_client_key}}{{end}}"
+        "apikeys":  ["{{with secret "mg-services/informant"}}{{index .Data.data.split_proxy_client_key}}{{end}}"]
     }
 }
 EOF

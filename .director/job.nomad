@@ -44,7 +44,8 @@ job "split-synchronizer.proxy" {
 
       config {
         image = "ghcr.io/mailgun/split-synchronizer:{@tag}"
-        command = "/split-proxy -config=/etc/splitio.config.json"
+        command = "split-proxy"
+        args= ["-config=/etc/splitio.config.json"]
         force_pull = true
 
         ports = ["http", "admin"]

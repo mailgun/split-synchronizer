@@ -1,7 +1,16 @@
-# Split Synchronizer
+### JIRA
 
-## What did you accomplish?
+[](https://mailgun.atlassian.net/browse/)
 
-## How do we test the changes introduced in this PR?
+### Features
 
-## Extra Notes
+- Include a list of significant changes included in this pull request
+
+### Testing
+
+Description of tested feature
+
+- Steps:
+  - Step one
+  - Step two
+  - ...

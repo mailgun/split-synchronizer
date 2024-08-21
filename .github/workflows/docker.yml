@@ -1,4 +1,4 @@
-name: docker
+name: Build proxy docker image
 
 on:
   push:
@@ -16,82 +16,44 @@ jobs:
   docker:
     name: Build Docker image
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        app:
-          - synchronizer
-          - proxy
-        fips_mode:
-          - enabled
-          - disabled
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-
       - name: Setup QEMU
         uses: docker/setup-qemu-action@v3
         with:
           platforms: amd64,arm64
-
+      # Create a build container which buildx will u
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
-
-      - name: Login to Artifactory
-        if: ${{ github.event_name == 'push' }}
-        uses: docker/login-action@v3
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v2
         with:
-          registry: splitio-docker.jfrog.io
-          username: ${{ secrets.ARTIFACTORY_DOCKER_USER }}
-          password: ${{ secrets.ARTIFACTORY_DOCKER_PASS }}
-
-      - name: Get version
-        run: echo "VERSION=$(awk '/^const Version/{gsub(/"/, "", $4); print $4}' splitio/version.go)" >> $GITHUB_ENV
-
-      - name: Docker Build and Push
-        uses: docker/build-push-action@v5
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.CI_PAT }}
+      - name: Setup Docker layer Cache
+        uses: actions/cache@v3
         with:
-          context: .
-          file: docker/Dockerfile.${{ matrix.app }}
-          push: ${{ github.event_name == 'push' }}
-          platforms: linux/amd64,linux/arm64
-          tags: splitio-docker.jfrog.io/split-${{ matrix.app }}${{ matrix.fips_mode == 'enabled' && '-fips' || ''}}:${{ env.VERSION }},splitio-docker.jfrog.io/split-${{ matrix.app }}${{ matrix.fips_mode == 'enabled' && '-fips' || '' }}:latest
-          build-args: |
-            FIPS_MODE=${{ matrix.fips_mode }}
-
-  lacework:
-    name: Scan Docker image
-    if: ${{ github.event_name == 'pull_request' }}
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        app:
-          - synchronizer
-          - proxy
-        fips_mode:
-          - enabled
-          - disabled
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Get version
-        run: echo "VERSION=$(awk '/^const Version/{gsub(/"/, "", $4); print $4}' splitio/version.go)" >> $GITHUB_ENV
-
-      - name: Docker Build and Push
-        uses: docker/build-push-action@v5
+          path: /tmp/.buildx-cache
+          key: ${{ runner.os }}-docker-${{ github.event.number }}
+          restore-keys: ${{ runner.os }}-docker-
+      # Automagically extract useful information from the current github context and creates
+      # a set of labels for use by build-push-action to be attached to the final image.
+      - name: Extract Metadata for Docker
+        uses: docker/metadata-action@v4
+        with:
+          images: ${{ github.repository }}
+        id: meta
+      - name: Build and push
+        uses: docker/build-push-action@v2
         with:
           context: .
-          file: docker/Dockerfile.${{ matrix.app }}
-          push: false
-          tags: splitio-docker.jfrog.io/split-${{ matrix.app }}${{ matrix.fips_mode == 'enabled' && '-fips' || ''}}:${{ env.VERSION }}
-          build-args: |
-            FIPS_MODE=${{ matrix.fips_mode }}
-
-      - name: Scan container using Lacework
-        uses: lacework/lw-scanner-action@v1.4.1
-        with:
-          LW_ACCOUNT_NAME: ${{ secrets.LW_ACCOUNT_NAME }}
-          LW_ACCESS_TOKEN: ${{ secrets.LW_ACCESS_TOKEN }}
-          IMAGE_NAME: splitio-docker.jfrog.io/split-${{ matrix.app }}${{ matrix.fips_mode == 'enabled' && '-fips' || ''}}
-          IMAGE_TAG: ${{ env.VERSION }}
-          SAVE_RESULTS_IN_LACEWORK: true
+          file: docker/Dockerfile.proxy
+          tags: ghcr.io/${{ github.repository }}:PR${{ github.event.number }}
+          # We use local cache type, so we can clean up the cache
+          # https://github.com/docker/build-push-action/blob/master/docs/advanced/cache.md#local-cache
+          cache-from: type=local,src=/tmp/.buildx-cache
+          cache-to: type=local,mode=max,dest=/tmp/.buildx-cache-new
+          labels: ${{ steps.meta.outputs.labels }}
+          push: true

@@ -282,7 +282,6 @@ func buildPrefix(current string, nested string) string {
 	return fmt.Sprintf("%s-%s", current, nested)
 }
 
-
 func strSliceEquals(s1, s2 []string) bool {
 	if len(s1) != len(s2) {
 		return false

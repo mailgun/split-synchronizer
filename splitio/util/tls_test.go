@@ -105,10 +105,10 @@ func TestTLSConfigForServer(t *testing.T) {
 	}
 
 	res, err = TLSConfigForServer(&conf.TLS{
-		Enabled:                  true,
-		CertChainFN:              "../../test/certs/https/proxy.crt",
-		PrivateKeyFN:             "../../test/certs/https/proxy.key",
-		MinTLSVersion:            "1.3",
+		Enabled:             true,
+		CertChainFN:         "../../test/certs/https/proxy.crt",
+		PrivateKeyFN:        "../../test/certs/https/proxy.key",
+		MinTLSVersion:       "1.3",
 		AllowedCipherSuites: "TLS_RSA_WITH_RC4_128_SHA",
 	})
 
@@ -117,10 +117,10 @@ func TestTLSConfigForServer(t *testing.T) {
 	}
 
 	res, err = TLSConfigForServer(&conf.TLS{
-		Enabled:                  true,
-		CertChainFN:              "../../test/certs/https/proxy.crt",
-		PrivateKeyFN:             "../../test/certs/https/proxy.key",
-		MinTLSVersion:            "1.3",
+		Enabled:             true,
+		CertChainFN:         "../../test/certs/https/proxy.crt",
+		PrivateKeyFN:        "../../test/certs/https/proxy.key",
+		MinTLSVersion:       "1.3",
 		AllowedCipherSuites: "TLS_CHACHA20_POLY1305_SHA256",
 	})
 

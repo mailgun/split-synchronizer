@@ -40,7 +40,7 @@ func main() {
 	for _, collected := range collector.collected {
 		replacer := strings.NewReplacer(
 			"{cli}", collected.CliArg,
-			"{env}", *envPrefix + collected.Env,
+			"{env}", *envPrefix+collected.Env,
 			"{json}", collected.JSON,
 			"{desc}", collected.Description,
 			"{type}", collected.Type,

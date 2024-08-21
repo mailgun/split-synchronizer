@@ -44,7 +44,7 @@ job "split-synchronizer.proxy" {
 
       config {
         image = "ghcr.io/mailgun/split-synchronizer:{@tag}"
-        command = "split-proxy"
+        command = "/split-proxy"
         args= ["-config=/etc/splitio.config.json"]
         force_pull = true
 

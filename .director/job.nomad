@@ -54,7 +54,7 @@ job "split-synchronizer.proxy" {
           "{common[shared_tls_dir]}:/etc/mailgun/ssl:ro",
           "/var/mailgun:/var/mailgun",
           "secrets:/etc/secrets",
-          "/etc/splitio.config.json:/etc/splitio.config.json:ro",
+          "etc/splitio.config.json:/etc/splitio.config.json:ro",
         ]
       }
 

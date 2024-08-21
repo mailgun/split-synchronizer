@@ -24,7 +24,6 @@ FROM debian:12.6
 COPY --from=build /code/split-proxy split-proxy
 
 RUN ls
-
 RUN apt update -y
 RUN apt install -y bash ca-certificates
 RUN addgroup --gid 1000 --system 'split-proxy'
